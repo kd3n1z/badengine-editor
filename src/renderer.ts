@@ -26,4 +26,4 @@
  * ```
  */
 
-import './frontend/app';
+import './frontend/index';

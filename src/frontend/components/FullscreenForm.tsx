@@ -1,13 +1,16 @@
-import 'react'
+import { useContext } from 'react';
 import { JSXChildren } from '../types';
+import { WindowContext } from '../App';
 
 export type FullscreenFormProps = {
     children?: JSXChildren,
-    visible?: boolean
+    name: string
 };
 
 export default function FullscreenForm(props: FullscreenFormProps) {
+    const windowContext = useContext(WindowContext);
+
     return (
-        <div className={'form ' + (props.visible ? '' : 'closed')}>{props.children}</div>
+        <div className={'window ' + (windowContext.visibleWindowName == props.name ? '' : 'closed')}>{props.children}</div>
     );
 }

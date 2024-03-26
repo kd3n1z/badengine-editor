@@ -1,28 +1,16 @@
-import { createRoot } from 'react-dom/client';
-import './index.css';
 import CenteredForm from './components/CenteredForm';
 import FullscreenForm from './components/FullscreenForm';
+import { createContext, useState } from 'react';
 
-const defaultState = {
-    form: "editor"
-};
+export const WindowContext = createContext(null);
 
-export type Action = {
-    type: "set_form",
-    payload: "recent_projects" | "editor"
+export default function App() {
+    const [visibleWindowName, setVisibleWindowName] = useState("editor");
+
+    return (
+        <WindowContext.Provider value={{visibleWindowName, setVisibleWindowName}}>
+            <CenteredForm name='project_selector'>Hello, world!</CenteredForm>
+            <FullscreenForm name='editor'>Hello, world!</FullscreenForm>
+        </WindowContext.Provider>
+    );
 }
-
-const reducer = (state = defaultState, action: Action) => {
-    switch (action.type) {
-        case "set_form":
-            return { ...state, form: action.payload }
-    }
-}
-
-const root = createRoot(document.getElementById("react-root"));
-root.render(
-    <>
-        <CenteredForm visible={true}>Hello, world!</CenteredForm>
-        <FullscreenForm>Hello, world!</FullscreenForm>
-    </>
-);

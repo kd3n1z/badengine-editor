@@ -1,16 +1,14 @@
-import CenteredForm from './components/CenteredForm';
-import FullscreenForm from './components/FullscreenForm';
 import { createContext, useState } from 'react';
+import ProjectSelector from './forms/ProjectSelector';
 
-export const WindowContext = createContext(null);
+export const FormContext = createContext(null);
 
 export default function App() {
-    const [visibleWindowName, setVisibleWindowName] = useState("editor");
+    const [visibleFormName, setVisibleForm] = useState("editor");
 
     return (
-        <WindowContext.Provider value={{visibleWindowName, setVisibleWindowName}}>
-            <CenteredForm name='project_selector'>Hello, world!</CenteredForm>
-            <FullscreenForm name='editor'>Hello, world!</FullscreenForm>
-        </WindowContext.Provider>
+        <FormContext.Provider value={{ visibleWindowName: visibleFormName, setVisibleWindowName: setVisibleForm }}>
+            <ProjectSelector />
+        </FormContext.Provider>
     );
 }

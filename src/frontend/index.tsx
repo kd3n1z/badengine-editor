@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import './styles/fonts/BlinkMacSystemFont/stylesheet.css';
+import './styles/fonts/Inter/stylesheet.css';
 import './styles/index.css';
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'

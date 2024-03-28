@@ -13,7 +13,9 @@ export default function ProjectSelector() {
     const [projects, setProjects] = useState<IRecentProject[]>([]);
 
     useEffect(() => {
-        // todo
+        window.electronAPI.getBackendInfo().then((info) => {
+            setBackendInfo(info);
+        });
     }, []);
 
     const [backendInfo, setBackendInfo] = useState<string>("...");

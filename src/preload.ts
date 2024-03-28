@@ -1,2 +1,19 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from "electron";
+
+async function getBackendInfo(): Promise<string> {
+    return await ipcRenderer.invoke('get-backend-info') as string;
+}
+
+const electronAPI = {
+    getBackendInfo
+};
+
+declare global {
+    interface Window {
+        electronAPI: typeof electronAPI;
+    }
+}
+
+process.once("loaded", () => {
+    contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+});

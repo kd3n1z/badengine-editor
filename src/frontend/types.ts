@@ -4,3 +4,5 @@ export interface IRecentProject {
     name: string,
     path: string
 }
+
+export type FormNameType = "project-selector" | "project-creator";

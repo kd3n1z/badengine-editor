@@ -14,12 +14,29 @@
 
 body,
 html,
-#react-root,
-.form {
+#react-root {
     margin: 0;
     width: 100%;
     height: 100%;
     user-select: none;
+}
+
+.form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: var(--back-color);
+
+    transition: cubic-bezier(0, 0, 0.2, 1) 0.3s;
+}
+
+.form.closed {
+    visibility: collapse;
+    opacity: 0;
+    transform: scale(1.05);
 }
 
 body {
@@ -85,7 +102,7 @@ button:active {
 }
 
 .form > .centered > .content {
-    min-width: 300px;
+    min-width: 350px;
     padding: 20px;
 
     background-color: var(--panel-color);
@@ -110,6 +127,17 @@ button:active {
     font-size: 0.8em;
     font-weight: 600;
     opacity: 0.4;
+}
+
+.form > .close-button {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    cursor: pointer;
+}
+
+.form > .close-button:active {
+    opacity: 0.5;
 }
 
 .form > .centered > .content > .bottom-buttons {

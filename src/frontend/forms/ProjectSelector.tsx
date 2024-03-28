@@ -16,13 +16,13 @@ export default function ProjectSelector() {
     }, []);
 
     return (
-        <CenteredForm name="project_selector" title={<>
+        <CenteredForm name="project-selector" title={<>
             <FontAwesomeIcon icon="bolt" />&nbsp;
             <span className="baseline">
                 Badengine
                 <span className="version">&nbsp;v1.0.0</span>
             </span>
-        </>} >
+        </>} cornerInfo={"backend v1.0.0"}>
             <div className="projects-list">
                 {projects.map(e => <RecentProject key={e.path} project={e} />)}
             </div>

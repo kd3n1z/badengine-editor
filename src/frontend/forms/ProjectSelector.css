@@ -1,10 +1,10 @@
-.projects-list > .recent-project {
+#form-project-selector .projects-list > .recent-project {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-.projects-list > .recent-project > .icon {
+#form-project-selector .projects-list > .recent-project > .icon {
     background: linear-gradient(45deg, hsl(var(--colorH) 42% 48% / 1), hsl(calc(var(--colorH) + 60) 100% 78% / 1));
     width: 35px;
     height: 35px;
@@ -18,12 +18,12 @@
 }
 
 
-.projects-list > .recent-project > .name-and-path {
+#form-project-selector .projects-list > .recent-project > .name-and-path {
     display: flex;
     flex-direction: column;
 }
 
-.projects-list > .recent-project > .name-and-path > .path {
+#form-project-selector .projects-list > .recent-project > .name-and-path > .path {
     opacity: 0.4;
     font-size: 0.8em;
     white-space: nowrap;

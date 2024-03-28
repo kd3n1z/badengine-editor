@@ -1,5 +1,4 @@
 import CenteredForm from "../components/forms/CenteredForm";
-import FullscreenForm from "../components/forms/FullscreenForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import './ProjectSelector.css';
 import { useEffect, useState } from "react";

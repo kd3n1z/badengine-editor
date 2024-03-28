@@ -1,5 +1,5 @@
-import { limitString } from "../../App";
-import { IRecentProject } from "../../types";
+import { limitString } from "../../../../App";
+import { IRecentProject } from "../../../../types";
 
 const logoSeparatorsRegEx = /[\s-_]/g;
 

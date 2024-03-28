@@ -1,4 +1,4 @@
-import { JSXChildren } from '../../types';
+import { JSXChildren } from '../../../types';
 import FullscreenForm, { FullscreenFormProps } from './FullscreenForm';
 
 export default function CenteredForm(props: FullscreenFormProps & { title?: JSXChildren, cornerInfo?: JSXChildren }) {

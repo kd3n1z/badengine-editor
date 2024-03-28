@@ -3,6 +3,9 @@
     --front-color: #ffffff;
     --panel-color: #191919;
     --border-color: #ffffff21;
+    --button-back: #ffffff0f;
+
+    --font: 'Inter', sans-serif;
 }
 
 * {
@@ -20,10 +23,35 @@ html,
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font);
 
     background-color: var(--back-color);
     color: var(--front-color);
+}
+
+button,
+input[type='text'],
+input[type='number'] {
+    font-family: var(--font);
+    transition: ease-in-out 0.1s;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    color: var(--button-front);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.9em;
+    background: var(--button-back);
+    border: 1px solid var(--border-color);
+}
+
+button {
+    cursor: pointer;
+}
+
+button:active {
+    opacity: 0.5;
 }
 
 .form > .centered {
@@ -64,6 +92,15 @@ body {
 
     border: 1px solid var(--border-color);
     border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.separator {
+    height: 1px;
+    background-color: var(--border-color);
 }
 
 .form > .corner-info {
@@ -73,4 +110,14 @@ body {
     font-size: 0.8em;
     font-weight: 600;
     opacity: 0.4;
+}
+
+.form > .centered > .content > .bottom-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.form > .centered > .content > .bottom-buttons > * {
+    flex-grow: 1;
 }

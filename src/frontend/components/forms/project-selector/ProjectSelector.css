@@ -1,7 +1,18 @@
+:root {
+    --recent-project-back-hover: #ffffff07;
+}
+
 #form-project-selector .projects-list > .recent-project {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: ease-in-out 0.2s;
+}
+
+#form-project-selector .projects-list > .recent-project:hover {
+    background-color: var(--recent-project-back-hover);
 }
 
 #form-project-selector .projects-list > .recent-project > .icon {
@@ -16,7 +27,6 @@
     align-items: center;
     color: white;
 }
-
 
 #form-project-selector .projects-list > .recent-project > .name-and-path {
     display: flex;

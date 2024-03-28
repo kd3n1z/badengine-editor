@@ -1,3 +1,10 @@
+:root {
+    --back-color: #191919;
+    --front-color: #ffffff;
+    --panel-color: #191919;
+    --border-color: #ffffff21;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -14,22 +21,17 @@ html,
 
 body {
     font-family: 'Inter', sans-serif;
-}
 
-/* h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin: 0;
-} */
+    background-color: var(--back-color);
+    color: var(--front-color);
+}
 
 .form > .centered {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    position: fixed;
 }
 
 .form > .centered > .title {
@@ -38,7 +40,9 @@ h6 {
     justify-content: center;
     align-items: center;
     font-size: 2em;
-    font-weight: 700;
+    font-weight: 600;
+
+    padding-bottom: 15px;
 }
 
 .form > .centered > .title .baseline {
@@ -47,16 +51,17 @@ h6 {
 }
 
 .form > .centered > .title .version {
-    font-size: 0.7em;
-    font-weight: 600;
+    font-size: 0.5em;
+    font-weight: 500;
+    opacity: 0.5;
 }
 
 .form > .centered > .content {
     min-width: 300px;
-    min-height: 200px;
+    padding: 20px;
 
-    margin-top: 10px;
-    padding: 10px;
+    background-color: var(--panel-color);
 
-    background-color: red;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
 }

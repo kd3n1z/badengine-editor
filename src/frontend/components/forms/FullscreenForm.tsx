@@ -11,6 +11,8 @@ export default function FullscreenForm(props: FullscreenFormProps) {
     const windowContext = useContext(FormContext);
 
     return (
-        <div className={'form ' + (windowContext.visibleFormName == props.name ? '' : 'closed')}>{props.children}</div>
+        <div className={'form ' + (windowContext.visibleFormName == props.name ? '' : 'closed')}>
+            {props.children}
+        </div>
     );
 }

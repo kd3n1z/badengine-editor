@@ -1,14 +1,17 @@
 import { JSXChildren } from '../../types';
+import FullscreenForm, { FullscreenFormProps } from './FullscreenForm';
 
-export default function CenteredForm(props: { children: JSXChildren, title?: JSXChildren }) {
+export default function CenteredForm(props: FullscreenFormProps & { title?: JSXChildren }) {
     return (
-        <div className='centered'>
-            <span className='title'>
-                {props.title}
-            </span>
-            <div className='content'>
-                {props.children}
+        <FullscreenForm name={props.name}>
+            <div className='centered'>
+                {props.title != null ? <span className='title'>
+                    {props.title}
+                </span> : ""}
+                <div className='content'>
+                    {props.children}
+                </div>
             </div>
-        </div>
+        </FullscreenForm>
     );
 }

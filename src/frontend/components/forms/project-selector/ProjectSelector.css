@@ -1,5 +1,6 @@
 :root {
     --recent-project-back-hover: #ffffff07;
+    --color-errored: #ff7474;
 }
 
 #form-project-selector .projects-list {
@@ -53,4 +54,12 @@
     font-size: 0.8em;
     white-space: nowrap;
     text-align: center;
+}
+
+#form-project-selector .projects-list > .recent-project.errored > .name-and-path > * {
+    color: var(--color-errored);
+}
+
+#form-project-selector .projects-list > .recent-project.errored > .icon {
+    background: linear-gradient(45deg, #9b2e2e, #ff7676);
 }

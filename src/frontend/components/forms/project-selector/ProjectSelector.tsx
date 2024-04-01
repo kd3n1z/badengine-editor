@@ -1,16 +1,17 @@
 import CenteredForm from "../general/CenteredForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
-import { IRecentProject } from "../../../types";
+import { IListedProject, IProject, JSXChildren } from "../../../types";
 import RecentProject from "./components/RecentProject";
 import './ProjectSelector.css';
 import Separator from "../../general/Separator";
 import { FormContext } from "../../../App";
+import Loader from "../../general/Loader";
 
 export default function ProjectSelector() {
     const windowContext = useContext(FormContext);
 
-    const [projects, setProjects] = useState<IRecentProject[]>([]);
+    const [projects, setProjects] = useState<IListedProject[]>(null);
 
     useEffect(() => {
         window.electronAPI.getBackendInfo().then((info) => {
@@ -18,7 +19,38 @@ export default function ProjectSelector() {
         });
     }, []);
 
-    const [backendInfo, setBackendInfo] = useState<string>("...");
+
+    useEffect(() => {
+        if (windowContext.visibleFormName == "project-selector") {
+            const listedProjects: IListedProject[] = [];
+
+            window.electronAPI.getRecentProjects().then(async (recentProjects) => {
+                const sortedRecentProjects = recentProjects.sort((a, b) => b.lastOpenDate - a.lastOpenDate);
+
+                for (const project of sortedRecentProjects) {
+                    const projectPath = await window.electronAPI.pathJoin(project.path, "project.json");
+
+                    let name = "Unknown Project";
+                    let errored = true;
+
+                    if (await window.electronAPI.fileExists(projectPath)) {
+                        name = (JSON.parse(await window.electronAPI.fileRead(projectPath)) as IProject).name;
+                        errored = false;
+                    }
+
+                    listedProjects.push({
+                        name: name,
+                        path: project.path,
+                        errored: errored
+                    })
+                }
+
+                setProjects(listedProjects);
+            });
+        }
+    }, [windowContext.visibleFormName]);
+
+    const [backendInfo, setBackendInfo] = useState<JSXChildren>(<Loader />);
 
     return (
         <CenteredForm name="project-selector" title="project selector" titleElement={<>
@@ -30,9 +62,13 @@ export default function ProjectSelector() {
         </>} cornerInfo={backendInfo}>
             <div className="projects-list">
                 {
-                    projects.length > 0 ?
-                        projects.map(e => <RecentProject key={e.path} project={e} />) :
-                        <span className="no-projects">There's nothing here yet.</span>
+                    projects == null ?
+                        <span className="no-projects"><Loader /> Loading...</span> :
+                        (
+                            projects.length > 0 ?
+                                projects.map(e => <RecentProject key={e.path} project={e} />) :
+                                <span className="no-projects">There's nothing here yet.</span>
+                        )
                 }
             </div>
             <Separator />

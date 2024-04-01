@@ -2,7 +2,11 @@ import { contextBridge, ipcRenderer } from "electron";
 import { IRecentProject } from "./frontend/types";
 
 async function getBackendInfo(): Promise<string> {
-    return await ipcRenderer.invoke('get-backend-info') as string;
+    return (await backendExecute('getInfo')) ?? "backend failed to start";
+}
+
+async function backendExecute(args: string): Promise<string> {
+    return await ipcRenderer.invoke('backend-exec', args) as string;
 }
 
 async function getRecentProjects(): Promise<IRecentProject[]> {
@@ -37,7 +41,8 @@ const electronAPI = {
     fileExists,
     fileRead: readFile,
     pathJoin,
-    getAppDataPath
+    getAppDataPath,
+    backendExecute
 };
 
 declare global {

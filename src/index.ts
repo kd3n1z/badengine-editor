@@ -22,6 +22,8 @@ const createWindow = (): void => {
     const mainWindow = new BrowserWindow({
         height: 450,
         width: 800,
+        minHeight: 400,
+        minWidth: 600,
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
@@ -65,13 +67,13 @@ const appDataPath: string = app.getPath('userData');
 
 //#region api
 
-ipcMain.handle('get-backend-info', async () => {
+ipcMain.handle('backend-exec', async (_, args: string) => {
     try {
-        const { stdout } = await execPromise(editorBackendPath + ' getInfo');
+        const { stdout } = await execPromise(editorBackendPath + ' ' + args);
 
         return stdout;
     } catch {
-        return "backend failed to start :(";
+        return null;
     }
 });
 

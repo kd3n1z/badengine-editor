@@ -10,9 +10,9 @@ async function getRecentProjects(): Promise<IRecentProject[]> {
 
     if (await fileExists(recentProjectsPath)) {
         return JSON.parse(await readFile(recentProjectsPath));
-    } else {
-        return [];
     }
+
+    return [];
 }
 
 async function fileExists(path: string): Promise<boolean> {

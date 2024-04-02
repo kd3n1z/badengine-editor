@@ -99,15 +99,15 @@ ipcMain.handle('get-app-data-path', () => {
     return appDataPath;
 });
 
-ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: string) => {
+ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: string, type: "none" | "info" | "error" | "question" | "warning") => {
     const result: Electron.MessageBoxReturnValue = await dialog.showMessageBox(mainWindow, {
-        'type': 'question',
+        'type': type,
         'title': title,
         'message': message,
         'buttons': [
             'Yes',
             'No'
-        ]
+        ],
     });
 
     if (result.response === 0) {

@@ -8,7 +8,7 @@ const logoSeparatorsRegEx = /[\s-_]/g;
 export default function RecentProject(props: { project: IListedProject }) {
     const handleClick = async () => {
         if (props.project.errored) {
-            if (await window.electronAPI.showConfirmationDialog('Error loading project ' + props.project.path + '. Do you want to remove it from the list?')) {
+            if (await window.electronAPI.showConfirmationDialog('Error opening project ' + props.project.path + '. Do you want to remove it from the list?', 'error')) {
                 await window.electronAPI.setRecentProjects((await window.electronAPI.getRecentProjects()).filter((e => e.path != props.project.path)));
                 await updateProjects();
             }

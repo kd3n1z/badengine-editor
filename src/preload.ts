@@ -55,8 +55,8 @@ async function getAppDataPath(): Promise<string> {
     return await ipcRenderer.invoke('get-app-data-path') as string;
 }
 
-async function showConfirmationDialog(message: string): Promise<boolean> {
-    return await ipcRenderer.invoke('show-confirmation-dialog', 'badengine', message) as boolean;
+async function showConfirmationDialog(message: string, type: "none" | "info" | "error" | "question" | "warning"): Promise<boolean> {
+    return await ipcRenderer.invoke('show-confirmation-dialog', 'badengine', message, type) as boolean;
 }
 
 async function showSelectDirectoryDialog(): Promise<string> {

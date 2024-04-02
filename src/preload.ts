@@ -9,14 +9,30 @@ async function backendExecute(args: string): Promise<string> {
     return await ipcRenderer.invoke('backend-exec', args) as string;
 }
 
-async function getRecentProjects(): Promise<IRecentProject[]> {
-    const recentProjectsPath = await pathJoin(await getAppDataPath(), "recent-projects.json");
+let recentProjects: IRecentProject[] = null;
 
-    if (await fileExists(recentProjectsPath)) {
-        return JSON.parse(await readFile(recentProjectsPath));
+async function getRecentProjects(): Promise<IRecentProject[]> {
+    if (recentProjects === null) {
+        const recentProjectsPath = await getRecentProjectsPath();
+
+        if (await fileExists(recentProjectsPath)) {
+            recentProjects = JSON.parse(await readFile(recentProjectsPath));
+        } else {
+            recentProjects = [];
+        }
     }
 
-    return [];
+    return recentProjects;
+}
+
+async function setRecentProjects(projects: IRecentProject[]) {
+    recentProjects = projects;
+
+    await writeFile(await getRecentProjectsPath(), JSON.stringify(recentProjects));
+}
+
+async function getRecentProjectsPath(): Promise<string> {
+    return await pathJoin(await getAppDataPath(), "recent-projects.json");
 }
 
 async function fileExists(path: string): Promise<boolean> {
@@ -27,12 +43,20 @@ async function readFile(path: string): Promise<string> {
     return await ipcRenderer.invoke('file-read', path) as string;
 }
 
+async function writeFile(path: string, contents: string): Promise<void> {
+    return await ipcRenderer.invoke('file-write', path, contents);
+}
+
 async function pathJoin(...paths: string[]): Promise<string> {
     return await ipcRenderer.invoke('path-join', paths) as string;
 }
 
 async function getAppDataPath(): Promise<string> {
     return await ipcRenderer.invoke('get-app-data-path') as string;
+}
+
+async function showConfirmationDialog(message: string): Promise<boolean> {
+    return await ipcRenderer.invoke('show-confirmation-dialog', 'badengine', message) as boolean;
 }
 
 const electronAPI = {
@@ -42,7 +66,10 @@ const electronAPI = {
     fileRead: readFile,
     pathJoin,
     getAppDataPath,
-    backendExecute
+    backendExecute,
+    showConfirmationDialog,
+    setRecentProjects,
+    writeFile
 };
 
 declare global {

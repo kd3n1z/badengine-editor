@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import isDev from 'electron-is-dev';
 import * as util from "node:util";
@@ -17,9 +17,11 @@ if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
+let mainWindow: BrowserWindow;
+
 const createWindow = (): void => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         height: 450,
         width: 800,
         minHeight: 400,
@@ -85,6 +87,10 @@ ipcMain.handle('file-read', (_, path: string) => {
     return readFileSync(path, { encoding: "utf-8" });
 });
 
+ipcMain.handle('file-write', (_, path: string, contents: string) => {
+    return writeFileSync(path, contents, { encoding: "utf-8" });
+});
+
 ipcMain.handle('path-join', (_, paths: string[]) => {
     return path.join(...paths);
 });
@@ -92,5 +98,23 @@ ipcMain.handle('path-join', (_, paths: string[]) => {
 ipcMain.handle('get-app-data-path', () => {
     return appDataPath;
 });
+
+ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: string) => {
+    const result: Electron.MessageBoxReturnValue = await dialog.showMessageBox(mainWindow, {
+        'type': 'question',
+        'title': title,
+        'message': message,
+        'buttons': [
+            'Yes',
+            'No'
+        ]
+    });
+
+    if (result.response === 0) {
+        return true;
+    }
+
+    return false;
+})
 
 //#endregion

@@ -63,3 +63,7 @@
 #form-project-selector .projects-list > .recent-project.errored > .icon {
     background: linear-gradient(45deg, #9b2e2e, #ff7676);
 }
+
+#form-project-selector .projects-list > .recent-project .error-icon {
+    font-size: 1.5em;
+}

@@ -1,7 +1,7 @@
 import CenteredForm from "../general/CenteredForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
-import { IListedProject, IProject, JSXChildren } from "../../../types";
+import { IListedProject, IProject, IRecentProject, JSXChildren } from "../../../types";
 import RecentProject from "./components/RecentProject";
 import './ProjectSelector.scss';
 import Separator from "../../general/Separator";
@@ -59,6 +59,15 @@ export default function ProjectSelector() {
         }
     }, [windowContext.visibleFormName]);
 
+    const setRecentProject = async (path: string) => {
+        await window.electronAPI.setRecentProjects([
+            ...((await window.electronAPI.getRecentProjects()).filter(e => e.path != path)),
+            { path: path, lastOpenDate: Date.now() }
+        ]);
+
+        _updateProjects();
+    }
+
     const [backendInfo, setBackendInfo] = useState<JSXChildren>(<Loader />);
 
     return (
@@ -85,7 +94,13 @@ export default function ProjectSelector() {
                 <button onClick={() => {
                     windowContext.showForm("project-creator");
                 }}>New Project</button>
-                <button>Open Project</button>
+                <button onClick={async () => {
+                    const directory = await window.electronAPI.showSelectDirectoryDialog();
+
+                    if (directory !== null) {
+                        await setRecentProject(directory);
+                    }
+                }}>Open Project</button>
             </div>
         </CenteredForm>
     );

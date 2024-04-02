@@ -59,6 +59,10 @@ async function showConfirmationDialog(message: string): Promise<boolean> {
     return await ipcRenderer.invoke('show-confirmation-dialog', 'badengine', message) as boolean;
 }
 
+async function showSelectDirectoryDialog(): Promise<string> {
+    return await ipcRenderer.invoke('select-directory-dialog') as string;
+}
+
 const electronAPI = {
     getBackendInfo,
     getRecentProjects,
@@ -69,7 +73,8 @@ const electronAPI = {
     backendExecute,
     showConfirmationDialog,
     setRecentProjects,
-    writeFile
+    writeFile,
+    showSelectDirectoryDialog
 };
 
 declare global {

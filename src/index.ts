@@ -115,6 +115,18 @@ ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: str
     }
 
     return false;
-})
+});
+
+ipcMain.handle('select-directory-dialog', async () => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory']
+    });
+
+    if (result.filePaths.length <= 0) {
+        return null;
+    }
+
+    return result.filePaths[0];
+});
 
 //#endregion

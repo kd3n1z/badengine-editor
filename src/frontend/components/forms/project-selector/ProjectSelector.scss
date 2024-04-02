@@ -36,7 +36,7 @@
                 background: linear-gradient(
                     45deg,
                     hsl(var(--colorH) 42% 48% / 1),
-                    hsl((var(--colorH) + 60) 100% 78% / 1)
+                    hsl(calc(var(--colorH) + 60) 100% 78% / 1)
                 );
                 width: 35px;
                 height: 35px;

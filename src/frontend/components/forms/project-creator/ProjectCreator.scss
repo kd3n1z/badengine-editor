@@ -1,0 +1,13 @@
+#form-project-creator {
+    .list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding-bottom: 75px;
+        gap: 10px;
+
+        > span {
+            display: flex;
+            align-items: center;
+        }
+    }
+}

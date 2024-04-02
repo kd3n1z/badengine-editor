@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import CenteredForm from "../general/CenteredForm";
 import Separator from "../../general/Separator";
 import { FormContext } from "../../../App";
-import "./ProjectCreator.css";
+import "./ProjectCreator.scss";
 
 export default function ProjectCreator() {
     const windowContext = useContext(FormContext);

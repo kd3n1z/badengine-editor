@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles/fonts/Inter/stylesheet.css';
-import './styles/index.css';
+import './styles/index.scss';
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
 import { IListedProject, IProject, JSXChildren } from "../../../types";
 import RecentProject from "./components/RecentProject";
-import './ProjectSelector.css';
+import './ProjectSelector.scss';
 import Separator from "../../general/Separator";
 import { FormContext } from "../../../App";
 import Loader from "../../general/Loader";

@@ -1,7 +1,8 @@
-import type { Configuration } from 'webpack';
+import type {Configuration} from 'webpack';
 
-import { rules } from './webpack.rules';
-import { plugins } from './webpack.plugins';
+import {rules} from './webpack.rules';
+import {plugins} from './webpack.plugins';
+import * as path from "node:path";
 
 export const mainConfig: Configuration = {
     /**
@@ -15,6 +16,7 @@ export const mainConfig: Configuration = {
     },
     plugins,
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json', '.scss', '.sass'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
     },
+    devtool: 'source-map'
 };

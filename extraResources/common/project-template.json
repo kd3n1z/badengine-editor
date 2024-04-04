@@ -1,0 +1,13 @@
+{
+    "directories": [
+        {
+            "path": "assets"
+        },
+        {
+            "path": "csharp-project"
+        },
+        {
+            "path": "badengine-lib"
+        }
+    ]
+}

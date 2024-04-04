@@ -1,11 +1,24 @@
-import type { Configuration } from 'webpack';
+import type {Configuration} from 'webpack';
 
-import { rules } from './webpack.rules';
-import { plugins } from './webpack.plugins';
+import {rules} from './webpack.rules';
+import {plugins} from './webpack.plugins';
+import path from "node:path";
 
 rules.push({
     test: /\.css$/,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    use: [{loader: 'style-loader'}, {loader: 'css-loader'}],
+});
+
+rules.push({
+    test: /\.s[ac]ss$/i,
+    use: [
+        // Creates `style` nodes from JS strings
+        "style-loader",
+        // Translates CSS into CommonJS
+        "css-loader",
+        // Compiles Sass to CSS
+        "sass-loader",
+    ],
 });
 
 export const rendererConfig: Configuration = {
@@ -14,6 +27,6 @@ export const rendererConfig: Configuration = {
     },
     plugins,
     resolve: {
-        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.sass'],
     },
 };

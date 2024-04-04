@@ -1,0 +1,3 @@
+[submodule "extraResources/common/badengine-lib"]
+	path = extraResources/common/badengine-lib
+	url = git@github.com:kd3n1z/badengine-lib.git

@@ -63,6 +63,16 @@ async function showSelectDirectoryDialog(): Promise<string> {
     return await ipcRenderer.invoke('select-directory-dialog') as string;
 }
 
+let engineCompatibilityVersion: number = null;
+
+async function getEngineCompatibilityVersion(): Promise<number> {
+    if (engineCompatibilityVersion === null) {
+        engineCompatibilityVersion = await ipcRenderer.invoke('get-engine-compatibility-version') as number;
+    }
+
+    return engineCompatibilityVersion;
+}
+
 const electronAPI = {
     getBackendInfo,
     getRecentProjects,
@@ -74,7 +84,8 @@ const electronAPI = {
     showConfirmationDialog,
     setRecentProjects,
     writeFile,
-    showSelectDirectoryDialog
+    showSelectDirectoryDialog,
+    getEngineCompatibilityVersion
 };
 
 declare global {

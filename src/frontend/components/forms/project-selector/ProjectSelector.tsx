@@ -1,7 +1,7 @@
 import CenteredForm from "../general/CenteredForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
-import { IListedProject, IProject, IRecentProject, JSXChildren } from "../../../types";
+import { IListedProject, IProject, JSXChildren, ProjectStatus } from "../../../types";
 import RecentProject from "./components/RecentProject";
 import './ProjectSelector.scss';
 import Separator from "../../general/Separator";
@@ -34,19 +34,28 @@ export default function ProjectSelector() {
             for (const project of sortedRecentProjects) {
                 const projectPath = await window.electronAPI.pathJoin(project.path, "project.json");
 
-                let name = "Unknown Project";
-                let errored = true;
+                let projectJson: IProject = {
+                    name: "Unknown Project",
+                    initialScene: "_",
+                    engineCompatibilityVersion: -1
+                };
+                let status: ProjectStatus = "errored";
 
                 if (await window.electronAPI.fileExists(projectPath)) {
-                    name = (JSON.parse(await window.electronAPI.fileRead(projectPath)) as IProject).name;
-                    errored = false;
+                    try {
+                        projectJson = JSON.parse(await window.electronAPI.fileRead(projectPath)) as IProject;
+
+                        status = projectJson.engineCompatibilityVersion == await window.electronAPI.getEngineCompatibilityVersion() ? "ok" : "incompatible"
+                    } catch {
+                        // project is already errored
+                    }
                 }
 
                 listedProjects.push({
-                    name: name,
+                    project: projectJson,
                     path: project.path,
-                    errored: errored
-                })
+                    status: status
+                });
             }
 
             setProjects(listedProjects);

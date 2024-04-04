@@ -7,13 +7,16 @@ export interface IRecentProject {
 
 export interface IProject {
     name: string,
-    initialScene: string
+    initialScene: string,
+    engineCompatibilityVersion?: number
 }
 
+export type ProjectStatus = "ok" | "errored" | "incompatible";
+
 export interface IListedProject {
-    name: string,
+    project: IProject,
     path: string,
-    errored: boolean
+    status: ProjectStatus
 }
 
 export type FormNameType = "project-selector" | "project-creator";

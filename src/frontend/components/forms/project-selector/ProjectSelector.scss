@@ -1,6 +1,7 @@
 #form-project-selector {
     --recent-project-back-hover: #ffffff07;
     --color-errored: #ff7474;
+    --color-warned: #ffce74;
 
     .projects-list {
         display: flex;
@@ -28,6 +29,17 @@
 
                 > .icon {
                     background: linear-gradient(45deg, #9b2e2e, #ff7676);
+                    font-size: 1.2em;
+                }
+            }
+
+            &.warned {
+                > .name-and-path > * {
+                    color: var(--color-warned);
+                }
+
+                > .icon {
+                    background: linear-gradient(45deg, #9b7e2e, #ffcf76);
                     font-size: 1.2em;
                 }
             }

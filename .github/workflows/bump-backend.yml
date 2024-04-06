@@ -1,0 +1,40 @@
+name: Bump backend
+
+on:
+    repository_dispatch:
+        types:
+            - bump-backend
+
+jobs:
+    bump-backend:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Checkout badengine-editor-backend
+              uses: actions/checkout@v4
+              with:
+                  repository: kd3n1z/badengine-editor-backend
+                  path: ./badengine-editor-backend
+                  token: ${{ secrets.PAT }}
+            - name: Checkout badengine-editor
+              uses: actions/checkout@v4
+              with:
+                  repository: kd3n1z/badengine-editor
+                  path: ./badengine-editor
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: 6.0.x
+            - name: Build
+              working-directory: ./badengine-editor-backend
+              run: make prepare-front
+            - name: Get version
+              working-directory: ./badengine-editor-backend
+              run: echo "VERSION=$(dotnet run version)" >> $GITHUB_ENV
+            - name: Commit changes
+              uses: stefanzweifel/git-auto-commit-action@v5
+              with:
+                  repository: ./badengine-editor
+                  commit_message: 'feat(backend): update to v${{ env.VERSION }}'
+                  commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>

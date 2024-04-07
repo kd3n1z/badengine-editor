@@ -20,3 +20,13 @@ export interface IListedProject {
 }
 
 export type FormNameType = "project-selector" | "project-creator";
+
+export type ProjectTemplate = {
+    libPath: string
+    projectJsonPath: string
+    directories: string[]
+    files: {
+        fileName: string
+        contents: string
+    }[]
+};

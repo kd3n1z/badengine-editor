@@ -32,7 +32,7 @@ export default function ProjectSelector() {
             const sortedRecentProjects = recentProjects.sort((a, b) => b.lastOpenDate - a.lastOpenDate);
 
             for (const project of sortedRecentProjects) {
-                const projectPath = await window.electronAPI.pathJoin(project.path, "project.json");
+                const projectPath = await window.electronAPI.path.join(project.path, "project.json");
 
                 let projectJson: IProject = {
                     name: "Unknown Project",

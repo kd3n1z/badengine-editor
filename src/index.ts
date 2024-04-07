@@ -1,9 +1,9 @@
-import {app, BrowserWindow, dialog, ipcMain} from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import isDev from 'electron-is-dev';
 import * as util from "node:util";
-import {exec} from "node:child_process";
-import {existsSync, readFileSync, writeFileSync} from "fs";
+import { exec } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync, cpSync, mkdirSync } from "fs";
 
 const ENGINE_COMPATIBILITY_VERSION = 1;
 
@@ -65,7 +65,9 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-const editorBackendPath: string = path.join(...(isDev ? [__dirname, '..', '..'] : [process.resourcesPath]), 'extraResources', 'backend', process.platform + '-' + process.arch + '.exe');
+const extraResourcesPath: string = path.join(...(isDev ? [__dirname, '..', '..'] : [process.resourcesPath]), 'extraResources');
+const commonExtraResourcesPath: string = path.join(extraResourcesPath, 'common');
+const editorBackendPath: string = path.join(extraResourcesPath, 'backend', process.platform + '-' + process.arch + '.exe');
 
 const appDataPath: string = app.getPath('userData');
 
@@ -73,7 +75,7 @@ const appDataPath: string = app.getPath('userData');
 
 ipcMain.handle('backend-exec', async (_, args: string) => {
     try {
-        const {stdout} = await execPromise(editorBackendPath + ' ' + args);
+        const { stdout } = await execPromise(editorBackendPath + ' ' + args);
 
         return stdout;
     } catch {
@@ -86,15 +88,19 @@ ipcMain.handle('file-exists', (_, path: string) => {
 });
 
 ipcMain.handle('file-read', (_, path: string) => {
-    return readFileSync(path, {encoding: "utf-8"});
+    return readFileSync(path, { encoding: "utf-8" });
 });
 
 ipcMain.handle('file-write', (_, path: string, contents: string) => {
-    return writeFileSync(path, contents, {encoding: "utf-8"});
+    return writeFileSync(path, contents, { encoding: "utf-8" });
 });
 
 ipcMain.handle('path-join', (_, paths: string[]) => {
     return path.join(...paths);
+});
+
+ipcMain.handle('path-resolve', (_, paths: string[]) => {
+    return path.resolve(...paths);
 });
 
 ipcMain.handle('get-app-data-path', () => {
@@ -115,6 +121,14 @@ ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: str
     return result.response === 0;
 });
 
+ipcMain.handle('show-dialog', async (_, title: string, message: string, type: "none" | "info" | "error" | "question" | "warning") => {
+    await dialog.showMessageBox(mainWindow, {
+        'type': type,
+        'title': title,
+        'message': message
+    });
+});
+
 ipcMain.handle('select-directory-dialog', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
         properties: ['openDirectory']
@@ -129,6 +143,18 @@ ipcMain.handle('select-directory-dialog', async () => {
 
 ipcMain.handle('get-engine-compatibility-version', () => {
     return ENGINE_COMPATIBILITY_VERSION;
+});
+
+ipcMain.handle('get-extra-resources-path', () => {
+    return commonExtraResourcesPath;
+});
+
+ipcMain.handle('create-directory', (_, path: string) => {
+    mkdirSync(path);
+});
+
+ipcMain.handle('copy-directory', (_, from: string, to: string) => {
+    cpSync(from, to, { recursive: true });
 });
 
 //#endregion

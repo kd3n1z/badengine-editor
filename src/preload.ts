@@ -51,6 +51,10 @@ async function pathJoin(...paths: string[]): Promise<string> {
     return await ipcRenderer.invoke('path-join', paths) as string;
 }
 
+async function pathResolve(...paths: string[]): Promise<string> {
+    return await ipcRenderer.invoke('path-resolve', paths) as string;
+}
+
 async function getAppDataPath(): Promise<string> {
     return await ipcRenderer.invoke('get-app-data-path') as string;
 }
@@ -73,19 +77,50 @@ async function getEngineCompatibilityVersion(): Promise<number> {
     return engineCompatibilityVersion;
 }
 
+let extraResourcesPath: string = null;
+
+async function getExtraResourcesPath(): Promise<string> {
+    if (extraResourcesPath === null) {
+        extraResourcesPath = await ipcRenderer.invoke('get-extra-resources-path') as string;
+    }
+
+    return extraResourcesPath;
+}
+
+async function directoryCreate(path: string): Promise<void> {
+    await ipcRenderer.invoke('create-directory', path);
+}
+
+async function directoryCopy(from: string, to: string): Promise<void> {
+    await ipcRenderer.invoke('copy-directory', from, to);
+}
+
+async function showMessageBox(message: string, type: "none" | "info" | "error" | "question" | "warning"): Promise<void> {
+    await ipcRenderer.invoke('show-dialog', 'badengine', message, type) as boolean;
+}
+
 const electronAPI = {
     getBackendInfo,
     getRecentProjects,
     fileExists,
     fileRead: readFile,
-    pathJoin,
     getAppDataPath,
     backendExecute,
     showConfirmationDialog,
+    showMessageBox,
     setRecentProjects,
     writeFile,
     showSelectDirectoryDialog,
-    getEngineCompatibilityVersion
+    getEngineCompatibilityVersion,
+    getExtraResourcesPath,
+    path: {
+        join: pathJoin,
+        resolve: pathResolve
+    },
+    directory: {
+        copy: directoryCopy,
+        create: directoryCreate
+    }
 };
 
 declare global {

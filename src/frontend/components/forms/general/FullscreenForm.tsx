@@ -15,7 +15,7 @@ export default function FullscreenForm(props: FullscreenFormProps) {
         if (windowContext.visibleFormName == props.name) {
             document.title = "badengine - " + props.title;
         }
-    }, [windowContext.visibleFormName]);
+    }, [windowContext.visibleFormName, props.title]);
 
     return (
         <div

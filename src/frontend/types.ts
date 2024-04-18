@@ -1,4 +1,6 @@
-export type JSXChildren = string | JSX.Element | JSX.Element[];
+type JSXElement = string | JSX.Element | JSX.Element;
+
+export type JSXChildren = JSXElement | JSXElement[];
 
 export interface IRecentProject {
     path: string,
@@ -19,7 +21,7 @@ export interface IListedProject {
     status: ProjectStatus
 }
 
-export type FormNameType = "project-selector" | "project-creator";
+export type FormNameType = "project-selector" | "project-creator" | "editor";
 
 export type ProjectTemplate = {
     libPath: string

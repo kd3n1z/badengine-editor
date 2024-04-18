@@ -1,11 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { limitString } from "../../../../App";
+import { FormContext, limitString } from "../../../../App";
 import { IListedProject } from "../../../../types";
 import { updateProjects } from "../ProjectSelector";
+import { useContext } from "react";
 
 const logoSeparatorsRegEx = /[\s-_]/g;
 
 export default function RecentProject(props: { project: IListedProject }) {
+    const windowContext = useContext(FormContext);
+
     const statusesClassesPairs = {
         "ok": "ok",
         "incompatible": "warned",
@@ -13,7 +16,7 @@ export default function RecentProject(props: { project: IListedProject }) {
     };
 
     const openProject = () => {
-        // todo
+        windowContext.openProject(props.project.path);
     };
 
     const handleClick = async () => {

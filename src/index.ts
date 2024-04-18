@@ -2,7 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import isDev from 'electron-is-dev';
 import * as util from "node:util";
-import { exec } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync, cpSync, mkdirSync } from "fs";
 
 const ENGINE_COMPATIBILITY_VERSION = 1;
@@ -73,15 +73,7 @@ const appDataPath: string = app.getPath('userData');
 
 //#region api
 
-ipcMain.handle('backend-exec', async (_, args: string) => {
-    try {
-        const { stdout } = await execPromise(editorBackendPath + ' ' + args);
-
-        return stdout;
-    } catch {
-        return null;
-    }
-});
+//#region file api
 
 ipcMain.handle('file-exists', (_, path: string) => {
     return existsSync(path);
@@ -95,6 +87,18 @@ ipcMain.handle('file-write', (_, path: string, contents: string) => {
     return writeFileSync(path, contents, { encoding: "utf-8" });
 });
 
+ipcMain.handle('create-directory', (_, path: string) => {
+    mkdirSync(path);
+});
+
+ipcMain.handle('copy-directory', (_, from: string, to: string) => {
+    cpSync(from, to, { recursive: true });
+});
+
+//#endregion
+
+//#region path api
+
 ipcMain.handle('path-join', (_, paths: string[]) => {
     return path.join(...paths);
 });
@@ -106,6 +110,14 @@ ipcMain.handle('path-resolve', (_, paths: string[]) => {
 ipcMain.handle('get-app-data-path', () => {
     return appDataPath;
 });
+
+ipcMain.handle('get-extra-resources-path', () => {
+    return commonExtraResourcesPath;
+});
+
+//#endregion
+
+//#region dialogs api
 
 ipcMain.handle('show-confirmation-dialog', async (_, title: string, message: string, type: "none" | "info" | "error" | "question" | "warning") => {
     const result: Electron.MessageBoxReturnValue = await dialog.showMessageBox(mainWindow, {
@@ -141,20 +153,42 @@ ipcMain.handle('select-directory-dialog', async () => {
     return result.filePaths[0];
 });
 
+//#endregion
+
+//#region backend api
+
+ipcMain.handle('backend-exec', async (_, args: string) => {
+    try {
+        const { stdout } = await execPromise(editorBackendPath + ' ' + args);
+
+        return stdout;
+    } catch {
+        return null;
+    }
+});
+
+ipcMain.handle('backend-spawn', async (_, args: string[], handlerIndex: number): Promise<void> => {
+    const process = spawn(editorBackendPath, args);
+
+    process.stdout.on('data', (data) => {
+        mainWindow.webContents.send('backend-data-received', handlerIndex, data.toString('utf8'));
+    });
+    process.stderr.on('data', (data) => {
+        mainWindow.webContents.send('backend-error-received', handlerIndex, data.toString('utf8'));
+    });
+    process.on('close', (code) => {
+        mainWindow.webContents.send('backend-closed', handlerIndex, code);
+    });
+});
+
+//#endregion
+
+//#region misc
+
 ipcMain.handle('get-engine-compatibility-version', () => {
     return ENGINE_COMPATIBILITY_VERSION;
 });
 
-ipcMain.handle('get-extra-resources-path', () => {
-    return commonExtraResourcesPath;
-});
-
-ipcMain.handle('create-directory', (_, path: string) => {
-    mkdirSync(path);
-});
-
-ipcMain.handle('copy-directory', (_, from: string, to: string) => {
-    cpSync(from, to, { recursive: true });
-});
+//#endregion
 
 //#endregion

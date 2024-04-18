@@ -1,3 +1,5 @@
+// todo: reorganize this
+
 import { contextBridge, ipcRenderer } from "electron";
 import { IRecentProject } from "./frontend/types";
 
@@ -99,6 +101,45 @@ async function showMessageBox(message: string, type: "none" | "info" | "error" |
     await ipcRenderer.invoke('show-dialog', 'badengine', message, type) as boolean;
 }
 
+interface IBackendHandler {
+    dataHandler?: (data: string) => void,
+    errorHandler?: (data: string) => void,
+    closeHandler?: (code: number) => void,
+}
+
+const backendHandlers: IBackendHandler[] = [];
+
+ipcRenderer.on('backend-data-received', (_, handlerIndex, data: string) => {
+    const handler = backendHandlers[handlerIndex].dataHandler;
+
+    if (handler == null) {
+        return;
+    }
+
+    const lines = data.split('\n');
+    for (const line of lines) {
+        if (line.trim() != '') {
+            handler(line);
+        }
+    }
+});
+
+ipcRenderer.on('backend-error-received', (_, handlerIndex, data) => {
+    const handler = backendHandlers[handlerIndex].errorHandler;
+
+    if (handler == null) {
+        return;
+    }
+
+    handler(data);
+});
+
+async function spawnBackend(args: string[], handlers: IBackendHandler): Promise<void> {
+    backendHandlers.push(handlers);
+
+    await ipcRenderer.invoke('backend-spawn', args, backendHandlers.length - 1);
+}
+
 const electronAPI = {
     getBackendInfo,
     getRecentProjects,
@@ -120,7 +161,8 @@ const electronAPI = {
     directory: {
         copy: directoryCopy,
         create: directoryCreate
-    }
+    },
+    spawnBackend
 };
 
 declare global {

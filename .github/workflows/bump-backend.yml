@@ -4,6 +4,7 @@ on:
     repository_dispatch:
         types:
             - bump-backend
+    workflow_dispatch:
 
 jobs:
     bump-backend:
@@ -31,10 +32,16 @@ jobs:
               run: make prepare-front
             - name: Get version
               working-directory: ./badengine-editor-backend
-              run: echo "VERSION=$(dotnet run version)" >> $GITHUB_ENV
+              run: |
+                  echo "VERSION=$(dotnet run --property WarningLevel=0 version)" >> $GITHUB_ENV
+                  echo "COMMIT_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+                  echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
             - name: Commit changes
               uses: stefanzweifel/git-auto-commit-action@v5
               with:
                   repository: ./badengine-editor
-                  commit_message: 'feat(backend): update to v${{ env.VERSION }}'
+                  commit_message: 'feat(backend): update to v${{ env.VERSION }} (commit ${{ env.COMMIT_SHORT }})
+
+
+                      bumped backend to commit https://github.com/kd3n1z/badengine-editor-backend/commit/${{ env.COMMIT }}'
                   commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>

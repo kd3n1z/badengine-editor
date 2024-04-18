@@ -18,7 +18,11 @@ export default function BackendInfo(props: { instances: BackendInstanceInfo[], v
     };
 
     const getTime = (time: number): string => {
-        return new Date(time).toISOString().slice(11, 19);
+        const date = new Date(time);
+
+        return String(date.getHours()).padStart(2, '0') + ":" +
+            String(date.getMinutes()).padStart(2, '0') + ":" +
+            String(date.getSeconds()).padStart(2, '0');
     };
 
     return (

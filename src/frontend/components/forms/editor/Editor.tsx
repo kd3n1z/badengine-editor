@@ -3,10 +3,11 @@ import FullscreenForm from "../general/FullscreenForm";
 import { FormContext } from '../../../App';
 import "./Editor.scss";
 import { IProject } from "../../../types";
-import Statusbar from "./components/Statusbar";
-import StatusbarButton from "./components/StatusbarButton";
+import Statusbar from "./components/statusbars/Statusbar";
+import StatusbarButton from "./components/statusbars/StatusbarButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import StatusbarGroup from "./components/StatusbarGroup";
+import StatusbarGroup from "./components/statusbars/StatusbarGroup";
+import BackendInfo from "./components/backend-info/BackendInfo";
 
 type EditorContextType = {
     projectPath: string,
@@ -15,12 +16,66 @@ type EditorContextType = {
 
 export const EditorContext = createContext<EditorContextType>(null);
 
+export type BackendInstanceInfo = {
+    id: number
+    name: string,
+    lastMessage: string,
+    lastMessageTime: number
+};
+
 export default function Editor() {
     const windowContext = useContext(FormContext);
 
     const [projectName, setProjectName] = useState<string>("loading...");
-
     const [backendStatus, setBackendStatus] = useState<string>("starting watcher...");
+    const [backendInstancesInfo, setBackendInstancesInfo] = useState<BackendInstanceInfo[]>([]);
+    const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
+
+    interface IBackendHandler {
+        dataHandler?: (data: string) => void,
+        errorHandler?: (data: string) => void,
+        closeHandler?: (code: number) => void,
+    }
+
+    const spawnBackend = async (args: string[], handlers: IBackendHandler) => {
+        const id = await window.electronAPI.spawnBackend(args, {
+            dataHandler: (data: string) => {
+                setBackendInstancesInfo(prevInstances => {
+                    const updatedInstances = [...prevInstances.filter(e => e.id !== id), {
+                        id,
+                        name: args[0],
+                        lastMessage: data,
+                        lastMessageTime: Date.now()
+                    }].sort((a, b) => a.id - b.id);
+
+                    return updatedInstances;
+                });
+
+                if (handlers.dataHandler != null) {
+                    handlers.dataHandler(data);
+                }
+            },
+            errorHandler: handlers.errorHandler,
+            closeHandler: (code: number) => {
+                setBackendInstancesInfo(prevInstances => {
+                    const updatedInstances = prevInstances.filter(e => e.id !== id);
+
+                    return updatedInstances;
+                });
+
+                if (handlers.closeHandler != null) {
+                    handlers.closeHandler(code);
+                }
+            }
+        });
+
+        setBackendInstancesInfo([...backendInstancesInfo, {
+            id,
+            name: args[0],
+            lastMessage: "...",
+            lastMessageTime: Date.now()
+        }]);
+    };
 
     const loadProject = async (directoryPath: string) => {
         const projectFilePath = await window.electronAPI.path.join(directoryPath, "project.json");
@@ -29,13 +84,9 @@ export default function Editor() {
 
         setProjectName(projectJson.name);
 
-        // todo: start watcher
+        // todo: read watcher data
 
-        window.electronAPI.spawnBackend(["version"], {
-            dataHandler: (data: string) => {
-                setBackendStatus(data);
-            }
-        })
+        spawnBackend(["watch", directoryPath], {});
     };
 
     useEffect(() => {
@@ -43,8 +94,6 @@ export default function Editor() {
             loadProject(windowContext.openedProjectPath);
         }
     }, [windowContext.openedProjectPath]);
-
-    const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
 
     return (
         <EditorContext.Provider value={{ projectName, projectPath: windowContext.openedProjectPath }}>
@@ -57,50 +106,7 @@ export default function Editor() {
                     </StatusbarGroup>
                 </Statusbar>
                 <div className="editor-main">
-                    <div className={"backend-info " + (backendInfoVisible ? "" : "hidden")}>
-                        <span className="title">Backend Instances</span>
-                        <div className="content">
-                            <div className="instance">
-                                <div className="title-and-time">
-                                    <span className="title">
-                                        <FontAwesomeIcon icon="glasses" /> watch
-                                    </span>
-                                    <span className="time">
-                                        02:37:41
-                                    </span>
-                                </div>
-                                <div className="last-message">
-                                    {`{"type":"event","data":"changed"}`}
-                                </div>
-                            </div>
-                            <div className="instance">
-                                <div className="title-and-time">
-                                    <span className="title">
-                                        <FontAwesomeIcon icon="magnifying-glass" /> analyse
-                                    </span>
-                                    <span className="time">
-                                        02:37:42
-                                    </span>
-                                </div>
-                                <div className="last-message">
-                                    {`{"type":"status","data":"running dotnet build..."}`}
-                                </div>
-                            </div>
-                            <div className="instance">
-                                <div className="title-and-time">
-                                    <span className="title">
-                                        <FontAwesomeIcon icon="play" /> play
-                                    </span>
-                                    <span className="time">
-                                        02:37:45
-                                    </span>
-                                </div>
-                                <div className="last-message">
-                                    {`{"type":"status","data":"building scene SampleScene..."}`}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <BackendInfo instances={backendInstancesInfo} visible={backendInfoVisible} />
                 </div>
                 <Statusbar className="bottom">
                     <StatusbarGroup>

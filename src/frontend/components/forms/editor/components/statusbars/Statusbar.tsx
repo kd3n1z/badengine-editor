@@ -1,4 +1,4 @@
-import { JSXChildren } from "../../../../types";
+import { JSXChildren } from "../../../../../types";
 
 export default function Statusbar(props: { children?: JSXChildren, className: string }) {
     return (

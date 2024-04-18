@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import { JSXChildren } from "../../../../types";
+import { JSXChildren } from "../../../../../types";
 
 export default function StatusbarButton(props: { children?: JSXChildren, enabled?: boolean, onClick?: MouseEventHandler<HTMLDivElement> }) {
     return (

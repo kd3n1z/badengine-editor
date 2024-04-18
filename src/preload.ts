@@ -134,10 +134,24 @@ ipcRenderer.on('backend-error-received', (_, handlerIndex, data) => {
     handler(data);
 });
 
-async function spawnBackend(args: string[], handlers: IBackendHandler): Promise<void> {
+ipcRenderer.on('backend-closed', (_, handlerIndex, code) => {
+    const handler = backendHandlers[handlerIndex].closeHandler;
+
+    if (handler == null) {
+        return;
+    }
+
+    handler(code);
+});
+
+async function spawnBackend(args: string[], handlers: IBackendHandler): Promise<number> {
     backendHandlers.push(handlers);
 
-    await ipcRenderer.invoke('backend-spawn', args, backendHandlers.length - 1);
+    const id = backendHandlers.length - 1;
+
+    await ipcRenderer.invoke('backend-spawn', args, id);
+
+    return id;
 }
 
 const electronAPI = {

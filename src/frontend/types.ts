@@ -32,3 +32,8 @@ export type ProjectTemplate = {
         contents: string
     }[]
 };
+
+export type BackendMessage = {
+    Type: "watchStatus" | "buildStatus",
+    Data: string
+}

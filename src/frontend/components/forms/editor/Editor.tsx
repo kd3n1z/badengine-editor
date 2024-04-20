@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import FullscreenForm from "../general/FullscreenForm";
-import { FormContext } from '../../../App';
+import { FormContext, limitString } from '../../../App';
 import "./Editor.scss";
-import { IProject } from "../../../types";
-import Statusbar from "./components/statusbars/Statusbar";
-import StatusbarButton from "./components/statusbars/StatusbarButton";
+import { BackendMessage, IProject } from "../../../types";
+import Statusbar from "./components/statusbar/Statusbar";
+import StatusbarButton from "./components/statusbar/StatusbarButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import StatusbarGroup from "./components/statusbars/StatusbarGroup";
+import StatusbarGroup from "./components/statusbar/StatusbarGroup";
 import BackendInfo from "./components/backend-info/BackendInfo";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 type EditorContextType = {
     projectPath: string,
@@ -23,16 +24,21 @@ export type BackendInstanceInfo = {
     lastMessageTime: number
 };
 
+type BackendStatus = {
+    icon: IconProp,
+    message: string
+}
+
 export default function Editor() {
     const windowContext = useContext(FormContext);
 
     const [projectName, setProjectName] = useState<string>("loading...");
-    const [backendStatus, setBackendStatus] = useState<string>("starting watcher...");
+    const [backendStatus, setBackendStatus] = useState<BackendStatus>({ icon: "bolt", message: "starting watcher..." });
     const [backendInstancesInfo, setBackendInstancesInfo] = useState<BackendInstanceInfo[]>([]);
     const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
 
     interface IBackendHandler {
-        dataHandler?: (data: string) => void,
+        dataHandler?: (data: BackendMessage) => void,
         errorHandler?: (data: string) => void,
         closeHandler?: (code: number) => void,
     }
@@ -51,8 +57,26 @@ export default function Editor() {
                     return updatedInstances;
                 });
 
+                const message = JSON.parse(data) as BackendMessage;
+
+                let icon: IconProp = "bolt";
+
+                switch (message.Type) {
+                    case "buildStatus":
+                        icon = message.Data == "done" ? "circle-check" : "hammer";
+                        break;
+                    case "watchStatus":
+                        icon = "glasses";
+                        break;
+                    default:
+                        icon = "info-circle";
+                        break;
+                }
+
+                setBackendStatus({ icon, message: "[" + args[0] + "] " + limitString(message.Data, 30) });
+
                 if (handlers.dataHandler != null) {
-                    handlers.dataHandler(data);
+                    handlers.dataHandler(message);
                 }
             },
             errorHandler: handlers.errorHandler,
@@ -118,7 +142,7 @@ export default function Editor() {
                         <StatusbarButton onClick={() => {
                             setBackendInfoVisibility(!backendInfoVisible);
                         }}>
-                            <FontAwesomeIcon icon="bolt" /> {backendStatus}
+                            <FontAwesomeIcon icon={backendStatus.icon} /> {backendStatus.message}
                         </StatusbarButton>
                     </StatusbarGroup>
                 </Statusbar>

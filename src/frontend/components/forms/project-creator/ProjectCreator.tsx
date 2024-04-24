@@ -70,7 +70,7 @@ export default function ProjectCreator() {
             JSON.stringify(project)
         );
 
-        await window.electronAPI.setRecentProjects([...await window.electronAPI.getRecentProjects(), {
+        await window.electronAPI.setRecentProjects([...(await window.electronAPI.getRecentProjects()).filter(e => e.path != dirPath), {
             path: dirPath,
             lastOpenDate: Date.now()
         }]);

@@ -36,8 +36,12 @@ export default function App() {
         setFormStack(formStack.slice(0, formStack.length - 1));
     }
 
-    const openProject = (path: string) => {
+    const openProject = async (path: string) => {
         setOpenedProjectPath(path);
+        await window.electronAPI.setRecentProjects([...(await window.electronAPI.getRecentProjects()).filter(e => e.path != path), {
+            path: path,
+            lastOpenDate: Date.now()
+        }]);
         showForm("editor");
     };
 

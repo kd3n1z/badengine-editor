@@ -93,12 +93,14 @@ export default function Editor() {
             }
         });
 
-        setBackendInstancesInfo([...backendInstancesInfo, {
-            id,
-            name: args[0],
-            lastMessage: "...",
-            lastMessageTime: Date.now()
-        }]);
+        setBackendInstancesInfo(prevInstances => {
+            return [...prevInstances, {
+                id,
+                name: args[0],
+                lastMessage: "...",
+                lastMessageTime: Date.now()
+            }];
+        });
     };
 
     const loadProject = async (directoryPath: string) => {
@@ -136,7 +138,14 @@ export default function Editor() {
                     <StatusbarGroup>
                         <StatusbarButton onClick={() => {
                             // todo: project settings
-                        }}><FontAwesomeIcon icon="gear" /></StatusbarButton>
+                        }}>
+                            <FontAwesomeIcon icon="gear" />
+                        </StatusbarButton>
+                        <StatusbarButton onClick={() => {
+                            // todo: open project directory
+                        }}>
+                            <FontAwesomeIcon icon="folder-open" />
+                        </StatusbarButton>
                     </StatusbarGroup>
                     <StatusbarGroup>
                         <StatusbarButton onClick={() => {

@@ -1,4 +1,5 @@
 import { JSXChildren } from "../../../../../types";
+import "./Statusbar.scss";
 
 export default function Statusbar(props: { children?: JSXChildren, className: string }) {
     return (

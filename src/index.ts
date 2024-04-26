@@ -50,9 +50,10 @@ app.on('ready', createWindow);
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    // maybe later i will rework this thing but currently it is better to always clean-start the editor
+    // if (process.platform !== 'darwin') {
+    app.quit();
+    // }
 });
 
 app.on('activate', () => {

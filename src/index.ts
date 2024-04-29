@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import isDev from 'electron-is-dev';
 import * as util from "node:util";
@@ -188,6 +188,10 @@ ipcMain.handle('backend-spawn', async (_, args: string[], handlerIndex: number):
 
 ipcMain.handle('get-engine-compatibility-version', () => {
     return ENGINE_COMPATIBILITY_VERSION;
+});
+
+ipcMain.handle('open-in-shell', (_, path: string): Promise<string> => {
+    return shell.openPath(path);
 });
 
 //#endregion

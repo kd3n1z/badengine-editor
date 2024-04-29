@@ -142,7 +142,7 @@ export default function Editor() {
                             <FontAwesomeIcon icon="gear" />
                         </StatusbarButton>
                         <StatusbarButton onClick={() => {
-                            // todo: open project directory
+                            window.electronAPI.openInShell(windowContext.openedProjectPath);
                         }}>
                             <FontAwesomeIcon icon="folder-open" />
                         </StatusbarButton>

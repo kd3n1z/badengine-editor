@@ -101,6 +101,10 @@ async function showMessageBox(message: string, type: "none" | "info" | "error" |
     await ipcRenderer.invoke('show-dialog', 'badengine', message, type) as boolean;
 }
 
+async function openInShell(path: string): Promise<string> {
+    return await ipcRenderer.invoke('open-in-shell', path);
+}
+
 interface IBackendHandler {
     dataHandler?: (data: string) => void,
     errorHandler?: (data: string) => void,
@@ -176,6 +180,7 @@ const electronAPI = {
         copy: directoryCopy,
         create: directoryCreate
     },
+    openInShell,
     spawnBackend
 };
 

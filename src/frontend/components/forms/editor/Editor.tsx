@@ -115,7 +115,7 @@ export default function Editor() {
     let analyseRequested = false;
     let analysing = false;
 
-    const analyse = async () => {
+    const analyse = () => {
         if (analysing) {
             analyseRequested = true;
             return;

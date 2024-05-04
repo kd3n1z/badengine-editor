@@ -9,10 +9,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import StatusbarGroup from "./components/statusbar/StatusbarGroup";
 import BackendInfo from "./components/backend-info/BackendInfo";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { AnalyseAssemblyInfo, AnalyseResult } from "./AnalyserTypes";
 
 type EditorContextType = {
     projectPath: string,
-    projectName: string
+    projectName: string,
+    assemblyInfo: AnalyseAssemblyInfo
 };
 
 export const EditorContext = createContext<EditorContextType>(null);
@@ -21,7 +23,7 @@ export type BackendInstanceInfo = {
     id: number
     name: string,
     lastMessage: string,
-    lastMessageTime: number
+    lastMessageTime: number,
 };
 
 type BackendStatus = {
@@ -36,6 +38,7 @@ export default function Editor() {
     const [backendStatus, setBackendStatus] = useState<BackendStatus>({ icon: "bolt", message: "starting watcher..." });
     const [backendInstancesInfo, setBackendInstancesInfo] = useState<BackendInstanceInfo[]>([]);
     const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
+    const [assemblyInfo, setAssemblyInfo] = useState<AnalyseAssemblyInfo>({ Components: [] });
 
     interface IBackendHandler {
         dataHandler?: (data: BackendMessage) => void,
@@ -67,6 +70,12 @@ export default function Editor() {
                         break;
                     case "watchStatus":
                         icon = "glasses";
+                        break;
+                    case "analyseStatus":
+                        icon = "magnifying-glass";
+                        break;
+                    case "analyseResult":
+                        icon = (JSON.parse(message.Data) as AnalyseResult).Status == "ok" ? "square-check" : "circle-exclamation";
                         break;
                     default:
                         icon = "info-circle";
@@ -103,6 +112,38 @@ export default function Editor() {
         });
     };
 
+    let analyseRequested = false;
+    let analysing = false;
+
+    const analyse = async () => {
+        if (analysing) {
+            analyseRequested = true;
+            return;
+        }
+
+        analysing = true;
+        analyseRequested = false;
+
+        spawnBackend(["analyse", windowContext.openedProjectPath], {
+            dataHandler: (data: BackendMessage) => {
+                if (data.Type == "analyseResult") {
+                    const result = JSON.parse(data.Data) as AnalyseResult;
+
+                    if (result.Status == "ok") {
+                        setAssemblyInfo(JSON.parse(result.Data));
+                    }
+                }
+            },
+            closeHandler: () => {
+                analysing = false;
+
+                if (analyseRequested) {
+                    analyse();
+                }
+            }
+        });
+    };
+
     const loadProject = async (directoryPath: string) => {
         const projectFilePath = await window.electronAPI.path.join(directoryPath, "project.json");
 
@@ -113,6 +154,8 @@ export default function Editor() {
         // todo: read watcher data
 
         spawnBackend(["watch", directoryPath], {});
+
+        analyse();
     };
 
     useEffect(() => {
@@ -122,7 +165,7 @@ export default function Editor() {
     }, [windowContext.openedProjectPath]);
 
     return (
-        <EditorContext.Provider value={{ projectName, projectPath: windowContext.openedProjectPath }}>
+        <EditorContext.Provider value={{ projectName, projectPath: windowContext.openedProjectPath, assemblyInfo }}>
             <FullscreenForm name="editor" title={projectName}>
                 <Statusbar className="top">
                     <StatusbarGroup>

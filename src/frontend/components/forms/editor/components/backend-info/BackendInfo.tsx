@@ -12,6 +12,8 @@ export default function BackendInfo(props: { instances: BackendInstanceInfo[], v
                 return "play";
             case "build":
                 return "hammer";
+            case "analyse":
+                return "magnifying-glass";
             default:
                 return "info-circle";
         }

@@ -151,10 +151,16 @@ export default function Editor() {
 
         setProjectName(projectJson.name);
 
-        // todo: read watcher data
+        // spawn watcher
+        spawnBackend(["watch", directoryPath], {
+            dataHandler: (data: BackendMessage) => {
+                if (data.Data == "changed") {
+                    analyse();
+                }
+            }
+        });
 
-        spawnBackend(["watch", directoryPath], {});
-
+        // first analyse
         analyse();
     };
 

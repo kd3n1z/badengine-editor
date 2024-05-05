@@ -39,6 +39,8 @@ export default function Editor() {
     const [backendInstancesInfo, setBackendInstancesInfo] = useState<BackendInstanceInfo[]>([]);
     const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
     const [assemblyInfo, setAssemblyInfo] = useState<AnalyseAssemblyInfo>({ Components: [] });
+    const [playing, setPlaying] = useState<boolean>(false);
+    const [gameStarted, setGameStarted] = useState<boolean>(false);
 
     interface IBackendHandler {
         dataHandler?: (data: BackendMessage) => void,
@@ -76,6 +78,14 @@ export default function Editor() {
                         break;
                     case "analyseResult":
                         icon = (JSON.parse(message.Data) as AnalyseResult).Status == "ok" ? "square-check" : "circle-exclamation";
+                        break;
+                    case "playStatus":
+                        if (message.Data.startsWith("game started")) {
+                            setGameStarted(true);
+                        } else if (message.Data.startsWith("game exited")) {
+                            setGameStarted(false);
+                        }
+                        icon = "play";
                         break;
                     default:
                         icon = "info-circle";
@@ -144,6 +154,20 @@ export default function Editor() {
         });
     };
 
+    const play = () => {
+        if (playing) {
+            return;
+        }
+
+        setPlaying(true);
+
+        spawnBackend(["play", windowContext.openedProjectPath], {
+            closeHandler: () => {
+                setPlaying(false);
+            }
+        });
+    };
+
     const loadProject = async (directoryPath: string) => {
         const projectFilePath = await window.electronAPI.path.join(directoryPath, "project.json");
 
@@ -175,15 +199,13 @@ export default function Editor() {
             <FullscreenForm name="editor" title={projectName}>
                 <Statusbar className="top">
                     <StatusbarGroup>
-                        <StatusbarButton onClick={() => {
-                            // todo: play
-                        }}><FontAwesomeIcon icon="play" /></StatusbarButton>
+                        <StatusbarButton onClick={play} enabled={!playing}><FontAwesomeIcon icon="play" /></StatusbarButton>
                     </StatusbarGroup>
                 </Statusbar>
                 <div className="editor-main">
                     <BackendInfo instances={backendInstancesInfo} visible={backendInfoVisible} />
                 </div>
-                <Statusbar className="bottom">
+                <Statusbar className={"bottom " + (gameStarted ? "game-started" : "")}>
                     <StatusbarGroup>
                         <StatusbarButton onClick={() => {
                             // todo: project settings

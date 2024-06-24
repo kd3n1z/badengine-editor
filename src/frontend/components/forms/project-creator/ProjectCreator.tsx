@@ -39,18 +39,11 @@ export default function ProjectCreator() {
 
         await window.electronAPI.directory.create(dirPath);
 
-        const extraResourcesPath = await window.electronAPI.getExtraResourcesPath();
-
-        const projectTemplate: ProjectTemplate = JSON.parse(await window.electronAPI.fileRead(await window.electronAPI.path.join(extraResourcesPath, 'project-template.json')));
+        const projectTemplate: ProjectTemplate = JSON.parse(await window.electronAPI.fileRead(await window.electronAPI.path.join(await window.electronAPI.getExtraResourcesPath(), 'project-template.json')));
 
         for (const directory of projectTemplate.directories) {
             await window.electronAPI.directory.create(await window.electronAPI.path.resolve(dirPath, directory));
         }
-
-        await window.electronAPI.directory.copy(
-            await window.electronAPI.path.join(extraResourcesPath, 'badengine-lib'),
-            await window.electronAPI.path.resolve(dirPath, projectTemplate.libPath)
-        );
 
         for (const file of projectTemplate.files) {
             await window.electronAPI.writeFile(

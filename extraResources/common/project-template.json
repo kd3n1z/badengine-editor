@@ -1,15 +1,10 @@
 {
-    "libPath": "./badengine-lib",
     "projectJsonPath": "./project.json",
     "directories": [
         "./assets",
         "./assets/scenes"
     ],
     "files": [
-        {
-            "fileName": "./game.csproj",
-            "contents": "<Project Sdk=\"Microsoft.NET.Sdk\">\n    <ItemGroup>\n        <Compile Include=\"assets\\**\\*.cs\" />\n    </ItemGroup>\n\n    <ItemGroup>\n        <ProjectReference Include=\".\\badengine-lib\\badengine.csproj\">\n            <Private>True</Private>\n        </ProjectReference>\n    </ItemGroup>\n\n    <PropertyGroup>\n        <OutputType>library</OutputType>\n        <TargetFramework>net6.0</TargetFramework>\n        <ImplicitUsings>enable</ImplicitUsings>\n        <Nullable>enable</Nullable>\n        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>\n    </PropertyGroup>\n</Project>"
-        },
         {
             "fileName": "./assets/scenes/scene.badscene",
             "contents": "{}"

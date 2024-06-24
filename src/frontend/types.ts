@@ -24,7 +24,6 @@ export interface IListedProject {
 export type FormNameType = "project-selector" | "project-creator" | "editor";
 
 export type ProjectTemplate = {
-    libPath: string
     projectJsonPath: string
     directories: string[]
     files: {

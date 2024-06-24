@@ -35,7 +35,7 @@ export default function Editor() {
     const windowContext = useContext(FormContext);
 
     const [projectName, setProjectName] = useState<string>("loading...");
-    const [backendStatus, setBackendStatus] = useState<BackendStatus>({ icon: "bolt", message: "starting watcher..." });
+    const [backendStatus, setBackendStatus] = useState<BackendStatus>({ icon: "bolt", message: "bootstrapping..." });
     const [backendInstancesInfo, setBackendInstancesInfo] = useState<BackendInstanceInfo[]>([]);
     const [backendInfoVisible, setBackendInfoVisibility] = useState<boolean>(false);
     const [assemblyInfo, setAssemblyInfo] = useState<AnalyseAssemblyInfo>({ Components: [] });

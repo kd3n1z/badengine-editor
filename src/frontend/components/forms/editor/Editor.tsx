@@ -175,17 +175,22 @@ export default function Editor() {
 
         setProjectName(projectJson.name);
 
-        // spawn watcher
-        spawnBackend(["watch", directoryPath], {
+        // bootstrap
+        spawnBackend(["generateCsProj", directoryPath, await window.electronAPI.path.join(await window.electronAPI.getExtraResourcesPath(), 'badengine-lib')], {
             dataHandler: (data: BackendMessage) => {
-                if (data.Data == "changed") {
+                if (data.Data == "done") {
+                    spawnBackend(["watch", directoryPath], {
+                        dataHandler: (data: BackendMessage) => {
+                            if (data.Data == "changed") {
+                                analyse();
+                            }
+                        }
+                    });
+
                     analyse();
                 }
             }
-        });
-
-        // first analyse
-        analyse();
+        })
     };
 
     useEffect(() => {

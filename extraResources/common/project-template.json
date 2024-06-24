@@ -8,6 +8,10 @@
         {
             "fileName": "./assets/scenes/scene.badscene",
             "contents": "{}"
+        },
+        {
+            "fileName": ".gitignore",
+            "contents": "# badengine\ngame.csproj\ntemp\n\n# dotnet\nbin\nobj\n\n# macOS\n.DS_Store\n"
         }
     ]
 }
